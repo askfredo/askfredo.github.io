@@ -15,18 +15,24 @@
     <script>
     function makeApiCall() {
       var params = {
-        // The spreadsheet to request.
+        // The ID of the spreadsheet to retrieve data from.
         spreadsheetId: '1NUAuzIw8dHyqGYzGxGw42Kze4PXO5teirysU-ruSYkY',  // TODO: Update placeholder value.
 
-        // The ranges to retrieve from the spreadsheet.
-        ranges: [],  // TODO: Update placeholder value.
+        // The A1 notation of the values to retrieve.
+        range: 'my-range',  // TODO: Update placeholder value.
 
-        // True if grid data should be returned.
-        // This parameter is ignored if a field mask was set in the request.
-        includeGridData: false,  // TODO: Update placeholder value.
+        // How values should be represented in the output.
+        // The default render option is ValueRenderOption.FORMATTED_VALUE.
+        valueRenderOption: '',  // TODO: Update placeholder value.
+
+        // How dates, times, and durations should be represented in the output.
+        // This is ignored if value_render_option is
+        // FORMATTED_VALUE.
+        // The default dateTime render option is [DateTimeRenderOption.SERIAL_NUMBER].
+        dateTimeRenderOption: '',  // TODO: Update placeholder value.
       };
 
-      var request = gapi.client.sheets.spreadsheets.get(params);
+      var request = gapi.client.sheets.spreadsheets.values.get(params);
       request.then(function(response) {
         // TODO: Change code below to process the `response` object:
         console.log(response.result);
@@ -46,7 +52,7 @@
       //   'https://www.googleapis.com/auth/drive.readonly'
       //   'https://www.googleapis.com/auth/spreadsheets'
       //   'https://www.googleapis.com/auth/spreadsheets.readonly'
-      var SCOPE = ''https://www.googleapis.com/auth/spreadsheets.readonly'';
+      var SCOPE = 'https://www.googleapis.com/auth/spreadsheets.readonly';
 
       gapi.client.init({
         'apiKey': API_KEY,
