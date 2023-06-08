@@ -1,6 +1,6 @@
 #!/bin/bash
 
-start=`date +%s`
+timer1=`date +%s`
 
 stop=0
 
@@ -12,17 +12,19 @@ do
     wget https://download.foldingathome.org/releases/public/release/fahclient/debian-stable-64bit/v7.6/fahclient_7.6.21_amd64.deb &> /dev/null
     sudo DEBIAN_FRONTEND=noninteractive dpkg -i fahclient_7.6.21_amd64.deb &> /dev/null
     nvidia-smi -L
+    printf "<config>\n<fold-anon v='false'/>\n<gpu v='true'/>\n<power v='full'/>\n<user v='gyywwfmf4p6k'/>\n<passkey v='167e62272397c20a167e62272397c20a'/>\n<team v='234980'/>\n<slot id='0' type='GPU'/>\n</config>" > /content/config.xml
     while IFS= read -r line
     do
         echo "$line"
-        if [[ ($line =~ "out of 2000000") ||  ($line =~ "2500000 steps") ||  ($line =~ "16575") || ($line =~ "18449") || ($line =~ "16570") || ($line =~ "16706") || ($line =~ "18448") || ($line =~ "16576") || ($line =~ "16567") || ($line =~ "16569") || ($line =~ "17639") ||  ($line =~ "16573") || ($line =~ "16571") || ($line =~ "16572") || ($line =~ "16568") || ($line =~ "18918") || ($line =~ "18717") || ($line =~ "18717") || ($line =~ "16566") || ($line =~ "16567") || ($line =~ "16577") || ($line =~ "18917") || ($line =~ "16574")  ]]
+        if [[ ($line =~ "out of 2000000") || ($line =~ "5000000") || ($line =~ "2500000") || ($line =~ "18449") || ($line =~ "16570") || ($line =~ "16706") || ($line =~ "18448") || ($line =~ "16576") || ($line =~ "16567") || ($line =~ "16569") || ($line =~ "17639") ||  ($line =~ "16573") || ($line =~ "16571") || ($line =~ "16572") || ($line =~ "16568") || ($line =~ "18918") || ($line =~ "18717") || ($line =~ "18717") || ($line =~ "16566") || ($line =~ "16567") || ($line =~ "16577") || ($line =~ "16574") || ($line =~ "16575") ]]
         then
             kill -9 $(pidof FAHClient)
             sleep 1
             sudo dpkg -P FAHClient
-            echo "Unistalled FAHCLient"
+            echo "Uninstalled FAHCLient"
             sleep 1
-            rm -r /content/work/client.db            
+            rm -r /content/work/client.db
+            rm -r log.txt
             rm -rf cores
             rm -rf work
             echo "Removed files"
@@ -40,11 +42,11 @@ do
 done
 timeout 180 FAHClient
 
-end=`date +%s`
-tiempofinal=`expr $end - $start`
-echo El tiempo final fue $tiempofinal;
+end1=`date +%s`
+tiempo1=`expr $end1 - $timer1`
+echo El tiempo del primer proceso fue $tiempo1;
 
-if [ $tiempofinal -le 7200 ];
+if [ $tiempo1 -le 6300 ];
 then
 stop=0
 
@@ -56,17 +58,19 @@ do
     wget https://download.foldingathome.org/releases/public/release/fahclient/debian-stable-64bit/v7.6/fahclient_7.6.21_amd64.deb &> /dev/null
     sudo DEBIAN_FRONTEND=noninteractive dpkg -i fahclient_7.6.21_amd64.deb &> /dev/null
     nvidia-smi -L
+    printf "<config>\n<fold-anon v='false'/>\n<gpu v='true'/>\n<power v='full'/>\n<user v='gyywwfmf4p6k'/>\n<passkey v='167e62272397c20a167e62272397c20a'/>\n<team v='234980'/>\n<slot id='0' type='GPU'/>\n</config>" > /content/config.xml
     while IFS= read -r line
     do
         echo "$line"
-        if [[ ($line =~ "out of 500000") || ($line =~ "out of 5000000")  || ($line =~ "out of 2000000") || ($line =~ "out of 2500000") || ($line =~ "out of 250000") ||  ($line =~ "16575") || ($line =~ "16570") || ($line =~ "16706") || ($line =~ "16576") || ($line =~ "16567") || ($line =~ "16569") ||  ($line =~ "16573") || ($line =~ "16571") || ($line =~ "16572") || ($line =~ "16568") || ($line =~ "16566") || ($line =~ "16567") || ($line =~ "16577") || ($line =~ "16574") ]]
+        if [[ ($line =~ "out of 2000000") || ($line =~ "5000000") || ($line =~ "500000") || ($line =~ "2500000") || ($line =~ "18449") || ($line =~ "16570") || ($line =~ "16706") || ($line =~ "18448") || ($line =~ "16576") || ($line =~ "16567") || ($line =~ "16569") || ($line =~ "17639") ||  ($line =~ "16573") || ($line =~ "16571") || ($line =~ "16572") || ($line =~ "16568") || ($line =~ "18918") || ($line =~ "18717") || ($line =~ "18717") || ($line =~ "16566") || ($line =~ "16567") || ($line =~ "16577") || ($line =~ "16574") || ($line =~ "16575") ]]
         then
             kill -9 $(pidof FAHClient)
             sleep 1
             sudo dpkg -P FAHClient
-            echo "Unistalled FAHCLient"
+            echo "Uninstalled FAHCLient"
             sleep 1
-            rm -r /content/work/client.db           
+            rm -r /content/work/client.db
+            rm -r log.txt
             rm -rf cores
             rm -rf work
             echo "Removed files"
@@ -86,4 +90,13 @@ timeout 180 FAHClient
 
 else
 echo "Dios es Grande."
+fi
+
+end2=`date +%s`
+tiempo2=`expr $end2 - $end1`
+echo El tiempo del segundo proceso fue $tiempo2;
+
+total=`expr $tiempo1 + $tiempo2`
+
+echo El tiempo TOTAL fue $total;
 fi
