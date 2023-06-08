@@ -46,6 +46,7 @@ echo El tiempo final fue $tiempofinal;
 
 if [ $tiempofinal -le 7600 ];
 then
+sleep 10
 stop=0
 
 nvidia-smi -L
@@ -59,7 +60,7 @@ do
     while IFS= read -r line
     do
         echo "$line"
-        if [[ ($line =~ "out of 5000000") || ($line =~ "out of 2000000") || ($line =~ "2500000 steps") ||  ($line =~ "16575") || ($line =~ "16570") || ($line =~ "16706") || ($line =~ "16576") || ($line =~ "16567") || ($line =~ "16569") ||  ($line =~ "16573") || ($line =~ "16571") || ($line =~ "16572") || ($line =~ "16568") || ($line =~ "16566") || ($line =~ "16567") || ($line =~ "16577") || ($line =~ "16574") ]]
+        if [[ ($line =~ "out of 5000000") || ($line =~ "out of 2000000") || ($line =~ "out of 2500000") ||  ($line =~ "16575") || ($line =~ "16570") || ($line =~ "16706") || ($line =~ "16576") || ($line =~ "16567") || ($line =~ "16569") ||  ($line =~ "16573") || ($line =~ "16571") || ($line =~ "16572") || ($line =~ "16568") || ($line =~ "16566") || ($line =~ "16567") || ($line =~ "16577") || ($line =~ "16574") ]]
         then
             kill -9 $(pidof FAHClient)
             sleep 1
