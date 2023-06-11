@@ -12,7 +12,6 @@ do
     wget https://download.foldingathome.org/releases/public/release/fahclient/debian-stable-64bit/v7.6/fahclient_7.6.21_amd64.deb &> /dev/null
     sudo DEBIAN_FRONTEND=noninteractive dpkg -i fahclient_7.6.21_amd64.deb &> /dev/null
     nvidia-smi -L
-    printf "<config>\n<fold-anon v='false'/>\n<gpu v='true'/>\n<power v='full'/>\n<user v='gyywwfmf4p6k'/>\n<passkey v='167e62272397c20a167e62272397c20a'/>\n<team v='234980'/>\n<slot id='0' type='GPU'/>\n</config>" > /content/config.xml
     while IFS= read -r line
     do
         echo "$line"
