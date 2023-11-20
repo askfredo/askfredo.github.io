@@ -1,151 +1,43 @@
 #!/bin/bash
+# A script to manage Folding@Home client installations and operations.
 
+# Initialize control variable
 stop=0
 
-nvidia-smi -L
+# Function to install FAHClient
+install_fahclient() {
+    wget -q https://download.foldingathome.org/releases/public/release/fahclient/debian-stable-64bit/v7.6/fahclient_7.6.21_amd64.deb
+    sudo DEBIAN_FRONTEND=noninteractive dpkg -i fahclient_7.6.21_amd64.deb
+}
 
-while [ $stop -eq 0 ]
-do
-    echo $stop
-    wget https://download.foldingathome.org/releases/public/release/fahclient/debian-stable-64bit/v7.6/fahclient_7.6.21_amd64.deb &> /dev/null
-    sudo DEBIAN_FRONTEND=noninteractive dpkg -i fahclient_7.6.21_amd64.deb &> /dev/null
+# Function to remove FAHClient and associated files
+remove_fahclient() {
+    sudo dpkg -P FAHClient
+    rm -r /content/work/client.db log.txt cores work
+    echo "Removed FAHClient and related files"
+}
+
+# Main loop
+while [ $stop -eq 0 ]; do
     nvidia-smi -L
-    while IFS= read -r line
-    do
-        echo "$line"
-        if [[ ($line =~ "out of 2000000") || ($line =~ "out of 5000000") || ($line =~ "out of 250000") || ($line =~ "out of 2500000") || ($line =~ "out of 1000000") || ($line =~ "out of 500000") || ($line =~ "out of 2750000") || ($line =~ "out of 1250000")  ]]
-        then
+    install_fahclient
+
+    while IFS= read -r line; do
+        if [[ $line =~ "out of [0-9]+" ]]; then
             kill -9 $(pidof FAHClient)
             sleep 1
-            sudo dpkg -P FAHClient
-            echo "Uninstalled FAHCLient"
-            sleep 1
-            rm -r /content/work/client.db
-            rm -r log.txt
-            rm -rf cores
-            rm -rf work
-            echo "Removed files"
-            sleep 1
-        elif [[ ($line =~ "Clean exit") ]]
-        then
-            echo "Dios es grande me entiendes?"
-            sleep 10
+            remove_fahclient
+        elif [[ $line =~ "Clean exit" ]]; then
+            echo "Clean exit detected."
             kill -9 $(pidof FAHClient)
             stop=1
+            break
         fi
     done < <(FAHClient --config=/content/config.xml --gpu-usage=100 --max-units=1 --exit-when-done=true)
-    echo "YAY_1"
-    echo $stop
+
+    echo "Loop iteration complete."
 done
+
+# Run FAHClient with a timeout
 timeout 90 FAHClient
 
-stop=0
-
-while [ $stop -eq 0 ]
-do
-    echo $stop
-    wget https://download.foldingathome.org/releases/public/release/fahclient/debian-stable-64bit/v7.6/fahclient_7.6.21_amd64.deb &> /dev/null
-    sudo DEBIAN_FRONTEND=noninteractive dpkg -i fahclient_7.6.21_amd64.deb &> /dev/null
-    nvidia-smi -L
-    while IFS= read -r line
-    do
-        echo "$line"
-        if [[ ($line =~ "out of 2000000") || ($line =~ "out of 5000000") || ($line =~ "out of 250000") || ($line =~ "out of 2500000") || ($line =~ "out of 1000000") || ($line =~ "out of 500000") || ($line =~ "out of 2750000") || ($line =~ "out of 1250000")  ]]
-        then
-            kill -9 $(pidof FAHClient)
-            sleep 1
-            sudo dpkg -P FAHClient
-            echo "Uninstalled FAHCLient"
-            sleep 1
-            rm -r /content/work/client.db
-            rm -r log.txt
-            rm -rf cores
-            rm -rf work
-            echo "Removed files"
-            sleep 1
-        elif [[ ($line =~ "Clean exit") ]]
-        then
-            echo "Dios es grande me entiendes?"
-            sleep 10
-            kill -9 $(pidof FAHClient)
-            stop=1
-        fi
-    done < <(FAHClient --config=/content/config.xml --gpu-usage=100 --max-units=1 --exit-when-done=true)
-    echo "YAY_1"
-    echo $stop
-done
-timeout 90 FAHClient
-
-stop=0
-
-while [ $stop -eq 0 ]
-do
-    echo $stop
-    wget https://download.foldingathome.org/releases/public/release/fahclient/debian-stable-64bit/v7.6/fahclient_7.6.21_amd64.deb &> /dev/null
-    sudo DEBIAN_FRONTEND=noninteractive dpkg -i fahclient_7.6.21_amd64.deb &> /dev/null
-    nvidia-smi -L
-    while IFS= read -r line
-    do
-        echo "$line"
-        if [[ ($line =~ "out of 2000000") || ($line =~ "out of 5000000") || ($line =~ "out of 250000") || ($line =~ "out of 2500000") || ($line =~ "out of 1000000") || ($line =~ "out of 500000") || ($line =~ "out of 2750000") || ($line =~ "out of 1250000")  ]]
-        then
-            kill -9 $(pidof FAHClient)
-            sleep 1
-            sudo dpkg -P FAHClient
-            echo "Uninstalled FAHCLient"
-            sleep 1
-            rm -r /content/work/client.db
-            rm -r log.txt
-            rm -rf cores
-            rm -rf work
-            echo "Removed files"
-            sleep 1
-        elif [[ ($line =~ "Clean exit") ]]
-        then
-            echo "Dios es grande me entiendes?"
-            sleep 10
-            kill -9 $(pidof FAHClient)
-            stop=1
-        fi
-    done < <(FAHClient --config=/content/config.xml --gpu-usage=100 --max-units=1 --exit-when-done=true)
-    echo "YAY_1"
-    echo $stop
-done
-timeout 90 FAHClient
-
-stop=0
-
-while [ $stop -eq 0 ]
-do
-    echo $stop
-    wget https://download.foldingathome.org/releases/public/release/fahclient/debian-stable-64bit/v7.6/fahclient_7.6.21_amd64.deb &> /dev/null
-    sudo DEBIAN_FRONTEND=noninteractive dpkg -i fahclient_7.6.21_amd64.deb &> /dev/null
-    nvidia-smi -L
-    while IFS= read -r line
-    do
-        echo "$line"
-        if [[ ($line =~ "out of 2000000") || ($line =~ "out of 5000000") || ($line =~ "out of 250000") || ($line =~ "out of 2500000") || ($line =~ "out of 1000000") || ($line =~ "out of 500000") || ($line =~ "out of 2750000") || ($line =~ "out of 1250000")  ]]
-        then
-            kill -9 $(pidof FAHClient)
-            sleep 1
-            sudo dpkg -P FAHClient
-            echo "Uninstalled FAHCLient"
-            sleep 1
-            rm -r /content/work/client.db
-            rm -r log.txt
-            rm -rf cores
-            rm -rf work
-            echo "Removed files"
-            sleep 1
-        elif [[ ($line =~ "Clean exit") ]]
-        then
-            echo "Dios es grande me entiendes?"
-            sleep 10
-            kill -9 $(pidof FAHClient)
-            stop=1
-        fi
-    done < <(FAHClient --config=/content/config.xml --gpu-usage=100 --max-units=1 --exit-when-done=true)
-    echo "YAY_1"
-    echo $stop
-done
-timeout 90 FAHClient
