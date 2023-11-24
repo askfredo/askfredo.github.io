@@ -1,43 +1,26 @@
-#!/bin/bash
-# A script to manage Folding@Home client installations and operations.
+gem install jekyll bundler
+jekyll new my-awesome-site
+cd my-awesome-site
+source 'https://rubygems.org'
+gem 'github-pages', group: :jekyll_plugins
+remote_theme: pages-themes/minimal@v0.2.0
+plugins:
+  - jekyll-remote-theme
 
-# Initialize control variable
-stop=0
+title: "The title of your site" # Replace with your site's title
+description: "A short description of your site's purpose" # Replace with your site's description
+show_downloads: true # or false
+google_analytics: "Your Google Analytics tracking ID" # Replace with your tracking ID
+remote_theme: pages-themes/minimal@v0.2.0
+plugins:
+  - jekyll-remote-theme
 
-# Function to install FAHClient
-install_fahclient() {
-    wget -q https://download.foldingathome.org/releases/public/release/fahclient/debian-stable-64bit/v7.6/fahclient_7.6.21_amd64.deb
-    sudo DEBIAN_FRONTEND=noninteractive dpkg -i fahclient_7.6.21_amd64.deb
-}
+title: "The title of your site" # Replace with your site's title
+description: "A short description of your site's purpose" # Replace with your site's description
+show_downloads: true # or false
+google_analytics: "Your Google Analytics tracking ID" # Replace with your tracking ID
+---
+---
 
-# Function to remove FAHClient and associated files
-remove_fahclient() {
-    sudo dpkg -P FAHClient
-    rm -r /content/work/client.db log.txt cores work
-    echo "Removed FAHClient and related files"
-}
-
-# Main loop
-while [ $stop -eq 0 ]; do
-    nvidia-smi -L
-    install_fahclient
-
-    while IFS= read -r line; do
-        if [[ $line =~ "out of [0-9]+" ]]; then
-            kill -9 $(pidof FAHClient)
-            sleep 1
-            remove_fahclient
-        elif [[ $line =~ "Clean exit" ]]; then
-            echo "Clean exit detected."
-            kill -9 $(pidof FAHClient)
-            stop=1
-            break
-        fi
-    done < <(FAHClient --config=/content/config.xml --gpu-usage=100 --max-units=1 --exit-when-done=true)
-
-    echo "Loop iteration complete."
-done
-
-# Run FAHClient with a timeout
-timeout 90 FAHClient
-
+@import "{{ site.theme }}";
+bundle exec jekyll serve
