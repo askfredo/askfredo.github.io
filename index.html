@@ -1,31 +1,393 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centered iframe with Background</title>
+    <title>Asistente Profesional con Audio</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         body, html {
-            height: 100%;
             margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            height: 100%;
+            overflow: hidden;
+            background-color: #1c1c1e;
+            color: #ffffff;
+        }
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #2c2c2e;
+            border-right: 1px solid #3a3a3c;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #1c1c1e;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .response-sidebar {
+            width: 250px;
+            background-color: #2c2c2e;
+            border-left: 1px solid #3a3a3c;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        h1 {
+            font-size: 24px;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+        .document-list, .response-list {
+            list-style-type: none;
+            padding: 0;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .document-list li, .response-sticker {
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #3a3a3c;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .document-list li:hover {
+            background-color: #48484a;
+        }
+        .response-sticker {
+            background-color: #0071e3;
+            color: white;
+            font-size: 14px;
+            word-wrap: break-word;
+        }
+        #canvas-container {
+            width: 300px;
+            height: 300px;
+            margin-top: 20px;
+        }
+        #response-container {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .select-button {
+            background-color: #0071e3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+        .select-button:hover {
+            background-color: #0077ed;
+        }
+        #speech-text {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #2c2c2e;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
+            min-height: 100px;
+        }
+        #audio-controls {
+            margin-top: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-image: url('https://images7.alphacoders.com/532/532021.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
         }
-        .iframe-container {
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 20px;
-            border-radius: 10px;
+        #play-pause {
+            background-color: #0071e3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #play-pause:hover {
+            background-color: #0077ed;
+        }
+        #status-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+            background-color: #4CAF50;
         }
     </style>
 </head>
 <body>
-    <div class="iframe-container">
-        <iframe src="https://www.retrogames.cc/embed/9476-pocket-fighter-970904-japan.html?autoplay=1" width="600" height="450" frameborder="no" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" scrolling="no"></iframe>
+    <div class="container">
+        <div class="sidebar">
+            <h1>Documentos</h1>
+            <ul id="document-list" class="document-list">
+                <!-- La lista de documentos se llenará dinámicamente -->
+            </ul>
+            <button id="select-documents" class="select-button">Seleccionar Documentos</button>
+        </div>
+        <div class="main-content">
+            <div id="status-container" style="display: flex; align-items: center; margin-bottom: 10px;">
+                <div id="status-indicator"></div>
+                <span id="status-text">Listo para escuchar</span>
+            </div>
+            <div id="response-container">
+                <p>Habla para hacer una pregunta.</p>
+            </div>
+            <div id="canvas-container"></div>
+            <div id="speech-text">Habla y verás el texto reconocido aquí...</div>
+            <div id="audio-controls">
+                <button id="play-pause">Reproducir respuesta</button>
+            </div>
+        </div>
+        <div class="response-sidebar">
+            <h1>Respuestas</h1>
+            <ul id="response-list" class="response-list">
+                <!-- Las respuestas se agregarán aquí dinámicamente -->
+            </ul>
+        </div>
     </div>
+
+    <script>
+        // Configuración de Three.js
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(300, 300);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        // Crear una esfera abstracta
+        const geometry = new THREE.SphereGeometry(1, 32, 32);
+        const material = new THREE.MeshPhongMaterial({
+            color: 0x007aff,
+            shininess: 100,
+            specular: 0x4444ff,
+            flatShading: true
+        });
+        const sphere = new THREE.Mesh(geometry, material);
+        scene.add(sphere);
+
+        // Añadir luz
+        const light = new THREE.PointLight(0xffffff, 1, 100);
+        light.position.set(0, 0, 10);
+        scene.add(light);
+
+        camera.position.z = 3;
+
+        // Variables para el control del micrófono y la animación
+        let audioContext;
+        let analyser;
+        let dataArray;
+        let isAnimating = false;
+        let recognition;
+        let isListening = false;
+
+        // Función para iniciar el micrófono
+        async function initMicrophone() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                const source = audioContext.createMediaStreamSource(stream);
+                source.connect(analyser);
+                analyser.fftSize = 256;
+                const bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+
+                // Iniciar el reconocimiento de voz
+                initSpeechRecognition();
+            } catch (error) {
+                console.error('Error al acceder al micrófono:', error);
+            }
+        }
+
+        // Función para iniciar el reconocimiento de voz
+        function initSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = 'es-ES';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+
+            let finalTranscript = '';
+
+            recognition.onresult = (event) => {
+                const speechText = document.getElementById('speech-text');
+                let interimTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript;
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
+                }
+
+                speechText.innerHTML = finalTranscript + '<i style="color: #999;">' + interimTranscript + '</i>';
+
+                // Si se detecta una pausa en el habla, enviar el mensaje
+                if (event.results[event.results.length - 1].isFinal) {
+                    sendMessage(finalTranscript);
+                    finalTranscript = '';
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Error en el reconocimiento de voz:', event.error);
+            };
+
+            recognition.onend = () => {
+                if (isListening) {
+                    recognition.start();
+                }
+            };
+
+            startListening();
+        }
+
+        function startListening() {
+            isListening = true;
+            recognition.start();
+            updateStatus('Escuchando', '#4CAF50');
+        }
+
+        function stopListening() {
+            isListening = false;
+            recognition.stop();
+            updateStatus('Procesando', '#FFA500');
+        }
+
+        function updateStatus(text, color) {
+            document.getElementById('status-text').textContent = text;
+            document.getElementById('status-indicator').style.backgroundColor = color;
+        }
+
+        // Función para enviar el mensaje al servidor
+        function sendMessage(message) {
+            console.log('Enviando mensaje:', message);
+            stopListening();
+            // Aquí simularemos una respuesta del servidor
+            setTimeout(() => {
+                const response = `He recibido tu mensaje: "${message}". Aquí está mi respuesta generada.`;
+                displayResponse(response);
+            }, 1000);
+        }
+
+        // Función para mostrar la respuesta
+        function displayResponse(response) {
+            const responseContainer = document.getElementById('response-container');
+            responseContainer.innerHTML = `<p>${response}</p>`;
+            addResponseSticker(response);
+            speakText(response);
+        }
+
+        // Función para agregar un sticker de respuesta
+        function addResponseSticker(response) {
+            const responseList = document.getElementById('response-list');
+            const sticker = document.createElement('li');
+            sticker.className = 'response-sticker';
+            sticker.textContent = response;
+            responseList.insertBefore(sticker, responseList.firstChild);
+        }
+
+        // Iniciar el micrófono al cargar la página
+        initMicrophone();
+
+        // Animación
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (analyser) {
+                analyser.getByteFrequencyData(dataArray);
+                const average = dataArray.reduce((sum, value) => sum + value, 0) / dataArray.length;
+
+                // Mover la esfera solo si se detecta sonido
+                if (average > 10) {
+                    isAnimating = true;
+                    sphere.rotation.x += 0.05;
+                    sphere.rotation.y += 0.05;
+                    sphere.scale.set(1 + average / 500, 1 + average / 500, 1 + average / 500);
+                } else {
+                    isAnimating = false;
+                    sphere.scale.set(1, 1, 1);
+                }
+            }
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Manejar la selección de documentos
+        const documentList = document.getElementById('document-list');
+        const selectButton = document.getElementById('select-documents');
+
+        selectButton.addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+            input.accept = '.pdf,.docx,.pptx,.xlsx,.txt';
+
+            input.onchange = e => {
+                const files = Array.from(e.target.files);
+                documentList.innerHTML = '';
+                files.forEach(file => {
+                    const li = document.createElement('li');
+                    li.textContent = file.name;
+                    documentList.appendChild(li);
+                });
+            };
+
+            input.click();
+        });
+
+        // Función para convertir texto a voz
+        function speakText(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'es-ES';
+            utterance.onend = () => {
+                startListening();
+            };
+            speechSynthesis.speak(utterance);
+        }
+
+        // Manejar la reproducción de audio
+        const playPauseButton = document.getElementById('play-pause');
+        let isPlaying = false;
+
+        playPauseButton.addEventListener('click', () => {
+            if (!isPlaying) {
+                const textToSpeak = document.getElementById('response-container').textContent;
+                speakText(textToSpeak);
+                playPauseButton.textContent = 'Pausar';
+                isPlaying = true;
+            } else {
+                speechSynthesis.cancel();
+                playPauseButton.textContent = 'Reproducir respuesta';
+                isPlaying = false;
+                startListening();
+            }
+        });
+    </script>
 </body>
 </html>
