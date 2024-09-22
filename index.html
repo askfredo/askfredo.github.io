@@ -1,26 +1,11 @@
-<html>
-    <head>
-        <style>
-            body, html {
-                margin: 0;
-                padding: 0;
-                height: 100%;
-            }
-        </style>
-    </head>
-    <body>
-        <div style="width:100%;height:100%;max-width:100%">
-            <div id="game"></div>
-        </div>
-        <script>
-            EJS_player = "#game";
-            EJS_core = "snes";  // Use the appropriate core for SNES
-            EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
-            EJS_gameUrl = "https://askfredo.github.io/F-Zero (USA).sfc";
-            EJS_gameID = 1; //Id needs to be unique per game in your website!
-            EJS_oldCores = "true";
-            EJS_netplayUrl = "URL HERE";
-            EJS_DEBUG_XX = "true";
-        </script>
-        <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
-    </body>
+<div style="width:640px;height:480px;max-width:100%">
+        <div id="game"></div>
+      </div>
+<script type="text/javascript">
+    EJS_player = '#game';
+    EJS_gameUrl = 'https://askfredo.github.io/F-Zero (USA).sfc'; // Url to Game rom
+    EJS_core = 'snes';
+    EJS_mouse = false; // SNES Mouse
+    EJS_multitap = false; // SNES Multitap
+</script>
+<script src="https://www.emulatorjs.com/loader.js"></script>
