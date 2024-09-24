@@ -1,27 +1,317 @@
-<html>
-    <head>
-        <style>
-            body, html {
-                margin: 0;
-                padding: 0;
-                height: 100%;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportsBet</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            height: 100%;
+        }
+        .background {
+            background-image: url('https://c0.wallpaperflare.com/preview/135/645/196/allianz-arena-munich-germany-sport.jpg');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+            display: flex;
+        }
+        .overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+        }
+        .sidebar {
+            width: 180px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            color: white;
+            overflow-y: auto;
+            font-size: 0.9rem;
+        }
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1, h2, h3 {
+            color: white;
+            text-align: center;
+            margin-top: 0;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+        h2 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        @media (min-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr 1fr;
             }
-        </style>
-    </head>
-    <body>
-        <div style="width:100%;height:100%;max-width:100%">
-            <div id="game"></div>
+        }
+        .card {
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .match, .bet-history-item, .open-bet {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .match h3, .bet-history-item h4, .open-bet h4 {
+            margin-top: 0;
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+        .odds {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        button {
+            width: 100%;
+            padding: 8px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 0.9rem;
+        }
+        button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        .user-stats {
+            margin-bottom: 15px;
+        }
+        .user-stats p {
+            margin: 3px 0;
+            font-size: 0.85rem;
+        }
+        .bet-history-item p, .open-bet p {
+            margin: 3px 0;
+            font-size: 0.85rem;
+        }
+        @media (max-width: 768px) {
+            .overlay {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            .main-content {
+                order: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background">
+        <div class="overlay">
+            <div class="sidebar">
+                <h2>User Stats</h2>
+                <div class="user-stats">
+                    <p>Total: <span id="totalBets">0</span></p>
+                    <p>Won: <span id="wonBets">0</span></p>
+                    <p>Lost: <span id="lostBets">0</span></p>
+                    <p>Profit: $<span id="profit">0</span></p>
+                </div>
+                <h3>Open Bets</h3>
+                <div id="openBets"></div>
+                <h3>Bet History</h3>
+                <div id="betHistory"></div>
+            </div>
+            <div class="main-content">
+                <div class="container">
+                    <h1>SportsBet</h1>
+                    <div class="grid">
+                        <div class="card">
+                            <h2>Upcoming Matches</h2>
+                            <div id="matches"></div>
+                        </div>
+                        <div class="card">
+                            <h2>Place Your Bet</h2>
+                            <div id="betForm">
+                                <p>Select a match to place a bet</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <script>
-            EJS_player = "#game";
-            EJS_core = "snes";  // Use the appropriate core for SNES
-            EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
-            EJS_gameUrl = "https://askfredo.github.io/F-Zero (USA).sfc";
-            EJS_gameID = 1; //Id needs to be unique per game in your website!
-            EJS_oldCores = true;
-            EJS_netplayUrl = "http://localhost:3000/";
-            EJS_fullscreenOnLoaded = "true";
-            EJS_DEBUG_XX = true;
-        </script>
-        <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
-    </body>
+    </div>
+
+    <script>
+        const matches = [
+            { id: 1, team1: "Bayern Munich", team2: "Borussia Dortmund", odds1: 1.8, odds2: 2.1 },
+            { id: 2, team1: "RB Leipzig", team2: "Bayer Leverkusen", odds1: 1.9, odds2: 2.0 },
+            { id: 3, team1: "Eintracht Frankfurt", team2: "VfL Wolfsburg", odds1: 1.7, odds2: 2.2 },
+        ];
+
+        let selectedMatch = null;
+        let userStats = {
+            totalBets: 5,
+            wonBets: 3,
+            lostBets: 2,
+            profit: 150
+        };
+
+        let openBets = [
+            { id: 1, match: "Bayern Munich vs Borussia Dortmund", team: "Bayern Munich", amount: 100 },
+            { id: 2, match: "RB Leipzig vs Bayer Leverkusen", team: "Bayer Leverkusen", amount: 50 }
+        ];
+
+        let betHistory = [
+            { match: "Schalke 04 vs Hertha BSC", team: "Schalke 04", amount: 75, result: "Won" },
+            { match: "FC Köln vs Union Berlin", team: "Union Berlin", amount: 60, result: "Lost" },
+            { match: "Werder Bremen vs Hoffenheim", team: "Werder Bremen", amount: 90, result: "Won" }
+        ];
+
+        function renderMatches() {
+            const matchesContainer = document.getElementById('matches');
+            matchesContainer.innerHTML = matches.map(match => `
+                <div class="match">
+                    <h3>${match.team1} vs ${match.team2}</h3>
+                    <div class="odds">
+                        <span>${match.team1}: ${match.odds1}</span>
+                        <span>${match.team2}: ${match.odds2}</span>
+                    </div>
+                    <button onclick="selectMatch(${match.id})">Select</button>
+                </div>
+            `).join('');
+        }
+
+        function selectMatch(id) {
+            selectedMatch = matches.find(match => match.id === id);
+            renderBetForm();
+        }
+
+        function renderBetForm() {
+            const betForm = document.getElementById('betForm');
+            if (selectedMatch) {
+                betForm.innerHTML = `
+                    <h3>${selectedMatch.team1} vs ${selectedMatch.team2}</h3>
+                    <div>
+                        <label for="betAmount">Bet Amount ($)</label>
+                        <input type="number" id="betAmount" placeholder="Enter bet amount">
+                    </div>
+                    <div>
+                        <label for="teamSelect">Select Team</label>
+                        <select id="teamSelect">
+                            <option value="">Choose a team</option>
+                            <option value="${selectedMatch.team1}">${selectedMatch.team1}</option>
+                            <option value="${selectedMatch.team2}">${selectedMatch.team2}</option>
+                        </select>
+                    </div>
+                    <button onclick="placeBet()">Place Bet</button>
+                `;
+            } else {
+                betForm.innerHTML = '<p>Select a match to place a bet</p>';
+            }
+        }
+
+        function placeBet() {
+            const betAmount = document.getElementById('betAmount').value;
+            const selectedTeam = document.getElementById('teamSelect').value;
+            if (betAmount && selectedTeam) {
+                alert(`Bet placed: $${betAmount} on ${selectedTeam} for ${selectedMatch.team1} vs ${selectedMatch.team2}`);
+                openBets.push({
+                    id: openBets.length + 1,
+                    match: `${selectedMatch.team1} vs ${selectedMatch.team2}`,
+                    team: selectedTeam,
+                    amount: parseInt(betAmount)
+                });
+                userStats.totalBets++;
+                selectedMatch = null;
+                renderBetForm();
+                renderUserStats();
+                renderOpenBets();
+            } else {
+                alert('Please enter bet amount and select a team');
+            }
+        }
+
+        function renderUserStats() {
+            document.getElementById('totalBets').textContent = userStats.totalBets;
+            document.getElementById('wonBets').textContent = userStats.wonBets;
+            document.getElementById('lostBets').textContent = userStats.lostBets;
+            document.getElementById('profit').textContent = userStats.profit;
+        }
+
+        function renderOpenBets() {
+            const openBetsContainer = document.getElementById('openBets');
+            openBetsContainer.innerHTML = openBets.map(bet => `
+                <div class="open-bet">
+                    <h4>${bet.match}</h4>
+                    <p>Team: ${bet.team}</p>
+                    <p>Amount: $${bet.amount}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderBetHistory() {
+            const betHistoryContainer = document.getElementById('betHistory');
+            betHistoryContainer.innerHTML = betHistory.map(bet => `
+                <div class="bet-history-item">
+                    <h4>${bet.match}</h4>
+                    <p>Team: ${bet.team}</p>
+                    <p>Amount: $${bet.amount}</p>
+                    <p>Result: ${bet.result}</p>
+                </div>
+            `).join('');
+        }
+
+        renderMatches();
+        renderBetForm();
+        renderUserStats();
+        renderOpenBets();
+        renderBetHistory();
+    </script>
+</body>
+</html>
