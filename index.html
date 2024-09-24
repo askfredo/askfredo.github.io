@@ -12,7 +12,7 @@
             height: 100%;
         }
         .background {
-            background-image: url('https://img.freepik.com/free-photo/neon-style-american-football-player_23-2151827370.jpg?t=st=1727211334~exp=1727214934~hmac=3cc07e1c0d9d606ff20036cfc509c0d30e0fa87690022a80073449c5c8aab2eb&w=900');
+            background-image: url('https://img.freepik.com/premium-photo/surreal-football-stadium-scene-with-smoke-neon-lights-concept-surreal-football-stadium-smoke-neon-lights-scene_918839-74062.jpg?w=900');
             background-size: cover;
             background-position: center;
             min-height: 100vh;
@@ -89,6 +89,27 @@
             margin-bottom: 5px;
             font-size: 1rem;
         }
+        .match-teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .team {
+            display: flex;
+            align-items: center;
+        }
+        .team-crest {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+            border-radius: 50%;
+            background-color: white;
+        }
+        .vs {
+            font-weight: bold;
+            margin: 0 10px;
+        }
         .odds {
             display: flex;
             justify-content: space-between;
@@ -136,6 +157,12 @@
         .bet-history-item p, .open-bet p {
             margin: 3px 0;
             font-size: 0.85rem;
+        }
+        .winning-simulator {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: rgba(0, 255, 0, 0.1);
+            border-radius: 5px;
         }
         @media (max-width: 768px) {
             .overlay {
@@ -189,9 +216,9 @@
 
     <script>
         const matches = [
-            { id: 1, team1: "Bayern Munich", team2: "Borussia Dortmund", odds1: 1.8, odds2: 2.1 },
-            { id: 2, team1: "RB Leipzig", team2: "Bayer Leverkusen", odds1: 1.9, odds2: 2.0 },
-            { id: 3, team1: "Eintracht Frankfurt", team2: "VfL Wolfsburg", odds1: 1.7, odds2: 2.2 },
+            { id: 1, team1: "Bayern Munich", team2: "Borussia Dortmund", odds1: 1.8, odds2: 2.1, crest1: "/placeholder.svg?height=24&width=24", crest2: "/placeholder.svg?height=24&width=24" },
+            { id: 2, team1: "RB Leipzig", team2: "Bayer Leverkusen", odds1: 1.9, odds2: 2.0, crest1: "/placeholder.svg?height=24&width=24", crest2: "/placeholder.svg?height=24&width=24" },
+            { id: 3, team1: "Eintracht Frankfurt", team2: "VfL Wolfsburg", odds1: 1.7, odds2: 2.2, crest1: "/placeholder.svg?height=24&width=24", crest2: "/placeholder.svg?height=24&width=24" },
         ];
 
         let selectedMatch = null;
@@ -217,7 +244,17 @@
             const matchesContainer = document.getElementById('matches');
             matchesContainer.innerHTML = matches.map(match => `
                 <div class="match">
-                    <h3>${match.team1} vs ${match.team2}</h3>
+                    <div class="match-teams">
+                        <div class="team">
+                            <img src="${match.crest1}" alt="${match.team1} crest" class="team-crest">
+                            <span>${match.team1}</span>
+                        </div>
+                        <span class="vs">VS</span>
+                        <div class="team">
+                            <img src="${match.crest2}" alt="${match.team2} crest" class="team-crest">
+                            <span>${match.team2}</span>
+                        </div>
+                    </div>
                     <div class="odds">
                         <span>${match.team1}: ${match.odds1}</span>
                         <span>${match.team2}: ${match.odds2}</span>
@@ -237,22 +274,51 @@
             if (selectedMatch) {
                 betForm.innerHTML = `
                     <h3>${selectedMatch.team1} vs ${selectedMatch.team2}</h3>
+                    <div class="match-teams">
+                        <div class="team">
+                            <img src="${selectedMatch.crest1}" alt="${selectedMatch.team1} crest" class="team-crest">
+                            <span>${selectedMatch.team1}</span>
+                        </div>
+                        <span class="vs">VS</span>
+                        <div class="team">
+                            <img src="${selectedMatch.crest2}" alt="${selectedMatch.team2} crest" class="team-crest">
+                            <span>${selectedMatch.team2}</span>
+                        </div>
+                    </div>
                     <div>
                         <label for="betAmount">Bet Amount ($)</label>
-                        <input type="number" id="betAmount" placeholder="Enter bet amount">
+                        <input type="number" id="betAmount" placeholder="Enter bet amount" oninput="updateWinningSimulator()">
                     </div>
                     <div>
                         <label for="teamSelect">Select Team</label>
-                        <select id="teamSelect">
+                        <select id="teamSelect" onchange="updateWinningSimulator()">
                             <option value="">Choose a team</option>
                             <option value="${selectedMatch.team1}">${selectedMatch.team1}</option>
                             <option value="${selectedMatch.team2}">${selectedMatch.team2}</option>
                         </select>
                     </div>
+                    <div id="winningSimulator" class="winning-simulator"></div>
                     <button onclick="placeBet()">Place Bet</button>
                 `;
             } else {
                 betForm.innerHTML = '<p>Select a match to place a bet</p>';
+            }
+        }
+
+        function updateWinningSimulator() {
+            const betAmount = document.getElementById('betAmount').value;
+            const selectedTeam = document.getElementById('teamSelect').value;
+            const winningSimulator = document.getElementById('winningSimulator');
+
+            if (betAmount && selectedTeam) {
+                const odds = selectedTeam === selectedMatch.team1 ? selectedMatch.odds1 : selectedMatch.odds2;
+                const possibleWinning = (betAmount * odds).toFixed(2);
+                winningSimulator.innerHTML = `
+                    <p>Possible Winning: $${possibleWinning}</p>
+                    <p>Net Profit: $${(possibleWinning - betAmount).toFixed(2)}</p>
+                `;
+            } else {
+                winningSimulator.innerHTML = '';
             }
         }
 
