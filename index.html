@@ -1,4 +1,6 @@
-<html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SportsBet</title>
@@ -35,10 +37,12 @@
             padding: 20px;
             box-sizing: border-box;
             overflow-y: auto;
+            display: flex;
+            justify-content: center;
         }
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
+            max-width: 1000px;
+            width: 100%;
         }
         h1, h2, h3 {
             color: white;
@@ -162,16 +166,48 @@
             background-color: rgba(0, 255, 0, 0.1);
             border-radius: 5px;
         }
-        @media (max-width: 768px) {
+        .right-sidebar {
+            width: 250px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            color: white;
+            overflow-y: auto;
+            font-size: 0.9rem;
+        }
+        .collapsible {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 15px;
+        }
+        .active, .collapsible:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .content {
+            padding: 0 18px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        @media (max-width: 1200px) {
             .overlay {
                 flex-direction: column;
             }
-            .sidebar {
+            .sidebar, .right-sidebar {
                 width: 100%;
                 order: 2;
             }
             .main-content {
                 order: 1;
+            }
+            .right-sidebar {
+                order: 3;
             }
         }
     </style>
@@ -188,42 +224,9 @@
                     <p>Profit: $<span id="profit">150</span></p>
                 </div>
                 <h3>Open Bets</h3>
-                <div id="openBets">
-                <div class="open-bet">
-                    <h4>Bayern Munich vs Borussia Dortmund</h4>
-                    <p>Team: Bayern Munich</p>
-                    <p>Amount: $100</p>
-                </div>
-            
-                <div class="open-bet">
-                    <h4>RB Leipzig vs Bayer Leverkusen</h4>
-                    <p>Team: Bayer Leverkusen</p>
-                    <p>Amount: $50</p>
-                </div>
-            </div>
+                <div id="openBets"></div>
                 <h3>Bet History</h3>
-                <div id="betHistory">
-                <div class="bet-history-item">
-                    <h4>Schalke 04 vs Hertha BSC</h4>
-                    <p>Team: Schalke 04</p>
-                    <p>Amount: $75</p>
-                    <p>Result: Won</p>
-                </div>
-            
-                <div class="bet-history-item">
-                    <h4>FC Köln vs Union Berlin</h4>
-                    <p>Team: Union Berlin</p>
-                    <p>Amount: $60</p>
-                    <p>Result: Lost</p>
-                </div>
-            
-                <div class="bet-history-item">
-                    <h4>Werder Bremen vs Hoffenheim</h4>
-                    <p>Team: Werder Bremen</p>
-                    <p>Amount: $90</p>
-                    <p>Result: Won</p>
-                </div>
-            </div>
+                <div id="betHistory"></div>
             </div>
             <div class="main-content">
                 <div class="container">
@@ -231,70 +234,29 @@
                     <div class="grid">
                         <div class="card">
                             <h2>Upcoming Matches</h2>
-                            <div id="matches">
-                <div class="match">
-                    <div class="match-teams">
-                        <div class="team">
-                            <img src="/placeholder.svg?height=24&amp;width=24" alt="Bayern Munich crest" class="team-crest">
-                            <span>Bayern Munich</span>
-                        </div>
-                        <span class="vs">VS</span>
-                        <div class="team">
-                            <img src="/placeholder.svg?height=24&amp;width=24" alt="Borussia Dortmund crest" class="team-crest">
-                            <span>Borussia Dortmund</span>
-                        </div>
-                    </div>
-                    <div class="odds">
-                        <span>Bayern Munich: 1.8</span>
-                        <span>Borussia Dortmund: 2.1</span>
-                    </div>
-                    <button onclick="selectMatch(1)">Select</button>
-                </div>
-            
-                <div class="match">
-                    <div class="match-teams">
-                        <div class="team">
-                            <img src="/placeholder.svg?height=24&amp;width=24" alt="RB Leipzig crest" class="team-crest">
-                            <span>RB Leipzig</span>
-                        </div>
-                        <span class="vs">VS</span>
-                        <div class="team">
-                            <img src="/placeholder.svg?height=24&amp;width=24" alt="Bayer Leverkusen crest" class="team-crest">
-                            <span>Bayer Leverkusen</span>
-                        </div>
-                    </div>
-                    <div class="odds">
-                        <span>RB Leipzig: 1.9</span>
-                        <span>Bayer Leverkusen: 2</span>
-                    </div>
-                    <button onclick="selectMatch(2)">Select</button>
-                </div>
-            
-                <div class="match">
-                    <div class="match-teams">
-                        <div class="team">
-                            <img src="/placeholder.svg?height=24&amp;width=24" alt="Eintracht Frankfurt crest" class="team-crest">
-                            <span>Eintracht Frankfurt</span>
-                        </div>
-                        <span class="vs">VS</span>
-                        <div class="team">
-                            <img src="/placeholder.svg?height=24&amp;width=24" alt="VfL Wolfsburg crest" class="team-crest">
-                            <span>VfL Wolfsburg</span>
-                        </div>
-                    </div>
-                    <div class="odds">
-                        <span>Eintracht Frankfurt: 1.7</span>
-                        <span>VfL Wolfsburg: 2.2</span>
-                    </div>
-                    <button onclick="selectMatch(3)">Select</button>
-                </div>
-            </div>
+                            <div id="matches"></div>
                         </div>
                         <div class="card">
                             <h2>Place Your Bet</h2>
-                            <div id="betForm"><p>Select a match to place a bet</p></div>
+                            <div id="betForm"></div>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="right-sidebar">
+                <button class="collapsible">News</button>
+                <div class="content">
+                    <p>Latest sports news and updates will be displayed here.</p>
+                </div>
+
+                <button class="collapsible">User Statuses</button>
+                <div class="content">
+                    <p>User online/offline statuses and activities will be shown here.</p>
+                </div>
+
+                <button class="collapsible">Algorithms</button>
+                <div class="content">
+                    <p>Betting algorithms and strategies will be listed here.</p>
                 </div>
             </div>
         </div>
@@ -464,4 +426,22 @@
         renderUserStats();
         renderOpenBets();
         renderBetHistory();
+
+        // Collapsible functionality for the right sidebar
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.maxHeight){
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
     </script>
+</body>
+</html>
