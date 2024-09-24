@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SportsBet</title>
@@ -12,7 +10,7 @@
             height: 100%;
         }
         .background {
-            background-image: url('https://c0.wallpaperflare.com/preview/135/645/196/allianz-arena-munich-germany-sport.jpg');
+            background-image: url('https://img.freepik.com/premium-photo/surreal-football-stadium-scene-with-smoke-neon-lights-concept-surreal-football-stadium-smoke-neon-lights-scene_918839-74062.jpg?w=900');
             background-size: cover;
             background-position: center;
             min-height: 100vh;
@@ -89,6 +87,27 @@
             margin-bottom: 5px;
             font-size: 1rem;
         }
+        .match-teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .team {
+            display: flex;
+            align-items: center;
+        }
+        .team-crest {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+            border-radius: 50%;
+            background-color: white;
+        }
+        .vs {
+            font-weight: bold;
+            margin: 0 10px;
+        }
         .odds {
             display: flex;
             justify-content: space-between;
@@ -137,6 +156,12 @@
             margin: 3px 0;
             font-size: 0.85rem;
         }
+        .winning-simulator {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: rgba(0, 255, 0, 0.1);
+            border-radius: 5px;
+        }
         @media (max-width: 768px) {
             .overlay {
                 flex-direction: column;
@@ -157,15 +182,48 @@
             <div class="sidebar">
                 <h2>User Stats</h2>
                 <div class="user-stats">
-                    <p>Total: <span id="totalBets">0</span></p>
-                    <p>Won: <span id="wonBets">0</span></p>
-                    <p>Lost: <span id="lostBets">0</span></p>
-                    <p>Profit: $<span id="profit">0</span></p>
+                    <p>Total: <span id="totalBets">5</span></p>
+                    <p>Won: <span id="wonBets">3</span></p>
+                    <p>Lost: <span id="lostBets">2</span></p>
+                    <p>Profit: $<span id="profit">150</span></p>
                 </div>
                 <h3>Open Bets</h3>
-                <div id="openBets"></div>
+                <div id="openBets">
+                <div class="open-bet">
+                    <h4>Bayern Munich vs Borussia Dortmund</h4>
+                    <p>Team: Bayern Munich</p>
+                    <p>Amount: $100</p>
+                </div>
+            
+                <div class="open-bet">
+                    <h4>RB Leipzig vs Bayer Leverkusen</h4>
+                    <p>Team: Bayer Leverkusen</p>
+                    <p>Amount: $50</p>
+                </div>
+            </div>
                 <h3>Bet History</h3>
-                <div id="betHistory"></div>
+                <div id="betHistory">
+                <div class="bet-history-item">
+                    <h4>Schalke 04 vs Hertha BSC</h4>
+                    <p>Team: Schalke 04</p>
+                    <p>Amount: $75</p>
+                    <p>Result: Won</p>
+                </div>
+            
+                <div class="bet-history-item">
+                    <h4>FC Köln vs Union Berlin</h4>
+                    <p>Team: Union Berlin</p>
+                    <p>Amount: $60</p>
+                    <p>Result: Lost</p>
+                </div>
+            
+                <div class="bet-history-item">
+                    <h4>Werder Bremen vs Hoffenheim</h4>
+                    <p>Team: Werder Bremen</p>
+                    <p>Amount: $90</p>
+                    <p>Result: Won</p>
+                </div>
+            </div>
             </div>
             <div class="main-content">
                 <div class="container">
@@ -173,13 +231,68 @@
                     <div class="grid">
                         <div class="card">
                             <h2>Upcoming Matches</h2>
-                            <div id="matches"></div>
+                            <div id="matches">
+                <div class="match">
+                    <div class="match-teams">
+                        <div class="team">
+                            <img src="/placeholder.svg?height=24&amp;width=24" alt="Bayern Munich crest" class="team-crest">
+                            <span>Bayern Munich</span>
+                        </div>
+                        <span class="vs">VS</span>
+                        <div class="team">
+                            <img src="/placeholder.svg?height=24&amp;width=24" alt="Borussia Dortmund crest" class="team-crest">
+                            <span>Borussia Dortmund</span>
+                        </div>
+                    </div>
+                    <div class="odds">
+                        <span>Bayern Munich: 1.8</span>
+                        <span>Borussia Dortmund: 2.1</span>
+                    </div>
+                    <button onclick="selectMatch(1)">Select</button>
+                </div>
+            
+                <div class="match">
+                    <div class="match-teams">
+                        <div class="team">
+                            <img src="/placeholder.svg?height=24&amp;width=24" alt="RB Leipzig crest" class="team-crest">
+                            <span>RB Leipzig</span>
+                        </div>
+                        <span class="vs">VS</span>
+                        <div class="team">
+                            <img src="/placeholder.svg?height=24&amp;width=24" alt="Bayer Leverkusen crest" class="team-crest">
+                            <span>Bayer Leverkusen</span>
+                        </div>
+                    </div>
+                    <div class="odds">
+                        <span>RB Leipzig: 1.9</span>
+                        <span>Bayer Leverkusen: 2</span>
+                    </div>
+                    <button onclick="selectMatch(2)">Select</button>
+                </div>
+            
+                <div class="match">
+                    <div class="match-teams">
+                        <div class="team">
+                            <img src="/placeholder.svg?height=24&amp;width=24" alt="Eintracht Frankfurt crest" class="team-crest">
+                            <span>Eintracht Frankfurt</span>
+                        </div>
+                        <span class="vs">VS</span>
+                        <div class="team">
+                            <img src="/placeholder.svg?height=24&amp;width=24" alt="VfL Wolfsburg crest" class="team-crest">
+                            <span>VfL Wolfsburg</span>
+                        </div>
+                    </div>
+                    <div class="odds">
+                        <span>Eintracht Frankfurt: 1.7</span>
+                        <span>VfL Wolfsburg: 2.2</span>
+                    </div>
+                    <button onclick="selectMatch(3)">Select</button>
+                </div>
+            </div>
                         </div>
                         <div class="card">
                             <h2>Place Your Bet</h2>
-                            <div id="betForm">
-                                <p>Select a match to place a bet</p>
-                            </div>
+                            <div id="betForm"><p>Select a match to place a bet</p></div>
                         </div>
                     </div>
                 </div>
@@ -188,12 +301,10 @@
     </div>
 
     <script>
-        document.body.style.zoom = "80%";
-
         const matches = [
-            { id: 1, team1: "Bayern Munich", team2: "Borussia Dortmund", odds1: 1.8, odds2: 2.1 },
-            { id: 2, team1: "RB Leipzig", team2: "Bayer Leverkusen", odds1: 1.9, odds2: 2.0 },
-            { id: 3, team1: "Eintracht Frankfurt", team2: "VfL Wolfsburg", odds1: 1.7, odds2: 2.2 },
+            { id: 1, team1: "Bayern Munich", team2: "Borussia Dortmund", odds1: 1.8, odds2: 2.1, crest1: "/placeholder.svg?height=24&width=24", crest2: "/placeholder.svg?height=24&width=24" },
+            { id: 2, team1: "RB Leipzig", team2: "Bayer Leverkusen", odds1: 1.9, odds2: 2.0, crest1: "/placeholder.svg?height=24&width=24", crest2: "/placeholder.svg?height=24&width=24" },
+            { id: 3, team1: "Eintracht Frankfurt", team2: "VfL Wolfsburg", odds1: 1.7, odds2: 2.2, crest1: "/placeholder.svg?height=24&width=24", crest2: "/placeholder.svg?height=24&width=24" },
         ];
 
         let selectedMatch = null;
@@ -219,7 +330,17 @@
             const matchesContainer = document.getElementById('matches');
             matchesContainer.innerHTML = matches.map(match => `
                 <div class="match">
-                    <h3>${match.team1} vs ${match.team2}</h3>
+                    <div class="match-teams">
+                        <div class="team">
+                            <img src="${match.crest1}" alt="${match.team1} crest" class="team-crest">
+                            <span>${match.team1}</span>
+                        </div>
+                        <span class="vs">VS</span>
+                        <div class="team">
+                            <img src="${match.crest2}" alt="${match.team2} crest" class="team-crest">
+                            <span>${match.team2}</span>
+                        </div>
+                    </div>
                     <div class="odds">
                         <span>${match.team1}: ${match.odds1}</span>
                         <span>${match.team2}: ${match.odds2}</span>
@@ -239,22 +360,51 @@
             if (selectedMatch) {
                 betForm.innerHTML = `
                     <h3>${selectedMatch.team1} vs ${selectedMatch.team2}</h3>
+                    <div class="match-teams">
+                        <div class="team">
+                            <img src="${selectedMatch.crest1}" alt="${selectedMatch.team1} crest" class="team-crest">
+                            <span>${selectedMatch.team1}</span>
+                        </div>
+                        <span class="vs">VS</span>
+                        <div class="team">
+                            <img src="${selectedMatch.crest2}" alt="${selectedMatch.team2} crest" class="team-crest">
+                            <span>${selectedMatch.team2}</span>
+                        </div>
+                    </div>
                     <div>
                         <label for="betAmount">Bet Amount ($)</label>
-                        <input type="number" id="betAmount" placeholder="Enter bet amount">
+                        <input type="number" id="betAmount" placeholder="Enter bet amount" oninput="updateWinningSimulator()">
                     </div>
                     <div>
                         <label for="teamSelect">Select Team</label>
-                        <select id="teamSelect">
+                        <select id="teamSelect" onchange="updateWinningSimulator()">
                             <option value="">Choose a team</option>
                             <option value="${selectedMatch.team1}">${selectedMatch.team1}</option>
                             <option value="${selectedMatch.team2}">${selectedMatch.team2}</option>
                         </select>
                     </div>
+                    <div id="winningSimulator" class="winning-simulator"></div>
                     <button onclick="placeBet()">Place Bet</button>
                 `;
             } else {
                 betForm.innerHTML = '<p>Select a match to place a bet</p>';
+            }
+        }
+
+        function updateWinningSimulator() {
+            const betAmount = document.getElementById('betAmount').value;
+            const selectedTeam = document.getElementById('teamSelect').value;
+            const winningSimulator = document.getElementById('winningSimulator');
+
+            if (betAmount && selectedTeam) {
+                const odds = selectedTeam === selectedMatch.team1 ? selectedMatch.odds1 : selectedMatch.odds2;
+                const possibleWinning = (betAmount * odds).toFixed(2);
+                winningSimulator.innerHTML = `
+                    <p>Possible Winning: $${possibleWinning}</p>
+                    <p>Net Profit: $${(possibleWinning - betAmount).toFixed(2)}</p>
+                `;
+            } else {
+                winningSimulator.innerHTML = '';
             }
         }
 
@@ -315,5 +465,3 @@
         renderOpenBets();
         renderBetHistory();
     </script>
-</body>
-</html>
