@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Image2Text - Convierte imágenes a texto con reconocimiento OCR">
+    <title>Image2Text - OCR App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 60px 40px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .logo {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 30px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: white;
+        }
+
+        h1 {
+            color: #2d3748;
+            font-size: 3em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 1.3em;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .feature {
+            padding: 30px;
+            background: #f7fafc;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .feature h3 {
+            color: #2d3748;
+            font-size: 1.4em;
+            margin-bottom: 10px;
+        }
+
+        .feature p {
+            color: #718096;
+            font-size: 1em;
+            line-height: 1.5;
+        }
+
+        .cta-section {
+            text-align: center;
+            margin: 50px 0 30px;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 45px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #e2e8f0;
+            color: #a0aec0;
+            font-size: 0.95em;
+        }
+
+        footer p {
+            margin: 5px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 25px;
+                margin: 20px auto;
+            }
+
+            h1 {
+                font-size: 2.2em;
+            }
+
+            .subtitle {
+                font-size: 1.1em;
+            }
+
+            .logo {
+                width: 100px;
+                height: 100px;
+                font-size: 50px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .download-btn {
+                padding: 15px 35px;
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">📷</div>
+            <h1>Image2Text</h1>
+            <p class="subtitle">Convierte imágenes a texto de manera rápida y precisa con nuestra aplicación de reconocimiento OCR</p>
+        </header>
+
+        <section class="features">
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <h3>Rápido</h3>
+                <p>Procesamiento instantáneo de imágenes con tecnología OCR avanzada</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🎯</div>
+                <h3>Preciso</h3>
+                <p>Reconocimiento de texto de alta calidad en múltiples idiomas</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📱</div>
+                <h3>Fácil de usar</h3>
+                <p>Interfaz intuitiva y simple para todos los usuarios</p>
+            </div>
+        </section>
+
+        <div class="cta-section">
+            <a href="https://play.google.com/store/apps/details?id=com.cinax.image2text" class="download-btn">
+                <span>📥</span>
+                Descargar en Google Play
+            </a>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Image2Text. Todos los derechos reservados.</p>
+            <p>Desarrollado para facilitar tu trabajo diario</p>
+        </footer>
+    </div>
+</body>
+</html>
